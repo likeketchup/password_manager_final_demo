@@ -15,6 +15,23 @@ if ($conn->connect_error) {
 }
 
 $uploadDir = './uploads/'; // Specify the directory where you want to save the uploaded files
+$maxFileSize = 100 * 1024; // 100KB
+
+// Function to validate file type and size
+function validateFile($file, $maxFileSize) {
+    // Check file size
+    if ($file['size'] > $maxFileSize) {
+        return array('valid' => false, 'error' => 'File too large');
+    }
+    
+    // Check file extension
+    $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    if ($extension !== 'txt') {
+        return array('valid' => false, 'error' => 'Only .txt files allowed');
+    }
+    
+    return array('valid' => true);
+}
 
 
 // Add Password
@@ -25,18 +42,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset ($_POST['addUsername']) && is
     $addNotes = $_POST['addNotes'];
     $vaultId = $_POST['vaultId'];
 
-    // Check if a file is uploaded
+    // Validate file upload
     if (!empty ($_FILES['file']['name'])) {
+        $validation = validateFile($_FILES['file'], $maxFileSize);
+        
+        if (!$validation['valid']) {
+            die('Error: ' . $validation['error']);
+        }
+        
         $uploadFile = $uploadDir . basename($_FILES['file']['name']);
-
         if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)) {
             $filePath = "'" . $uploadFile . "'";
         } else {
-            // Handle file upload error            
-            die ('Error uploading file.');
+            die('Error uploading file');
         }
     } else {
-        // If no file is uploaded, set the file path to NULL
         $filePath = "NULL";
     }
 
@@ -46,11 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset ($_POST['addUsername']) && is
     $resultAddPassword = $conn->query($queryAddPassword);
 
     if (!$resultAddPassword) {
-
-        die ('A fatal error occurred and has been logged.');
-        // die("Error adding password: " . $conn->error);
+        die('A fatal error occurred and has been logged.');
     }
-    // Redirect to the current page after adding the password
+    
     header("Location: {$_SERVER['PHP_SELF']}?vault_id=$vaultId");
     exit();
 }
@@ -64,15 +82,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset ($_POST['editPasswordId']) &&
     $editPasswordId = $_POST['editPasswordId'];
     $vaultId = $_POST['vaultId'];
 
-    // Check if a new file is uploaded
+    // Validate file upload
     if (!empty ($_FILES['editFile']['name'])) {
+        $validation = validateFile($_FILES['editFile'], $maxFileSize);
+        
+        if (!$validation['valid']) {
+            die('Error: ' . $validation['error']);
+        }
+        
         $updateFile = $uploadDir . basename($_FILES['editFile']['name']);
-
         if (move_uploaded_file($_FILES['editFile']['tmp_name'], $updateFile)) {
             $filePath = $updateFile;
         } else {
-
-            die ('Error uploading file.');
+            die('Error uploading file');
         }
     } else {
         // If no new file is uploaded, preserve the existing file path
@@ -81,17 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset ($_POST['editPasswordId']) &&
 
         if ($resultGetFilePath && $resultGetFilePath->num_rows > 0) {
             $row = $resultGetFilePath->fetch_assoc();
-            $existingFilePath = $row['file_path'];
-            $filePath = $existingFilePath;
+            $filePath = $row['file_path'];
         } else {
-            // Handle error if existing file path retrieval fails
-
-            die ('Error retrieving existing file path.');
+            die('Error retrieving existing file path');
         }
     }
 
-    // Check if filePath is NULL to properly format it in the query
-    if ($filePath === "NULL" || $filePath === null) {
+    // Format file path for SQL query
+    if ($filePath === null || $filePath === '') {
         $filePathSQL = "NULL";
     } else {
         $filePathSQL = "'" . $filePath . "'";
