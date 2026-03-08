@@ -1,0 +1,2 @@
+This is a valid test file for file upload testing.
+It contains text content that should be accepted.
