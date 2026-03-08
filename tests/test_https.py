@@ -1,5 +1,9 @@
 import requests
 import pytest
+import urllib3
+
+# Suppress self-signed certificate warning
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def test_https_connection():
