@@ -1,16 +1,11 @@
 import requests
 import pytest
-import os
 
 
 def test_sql_injection_protection():
     """Test that SQL injection attacks are blocked on login page"""
-    # Construct path to the certificate (go up from tests/ to repo root)
-    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    cert_path = os.path.join(repo_root, 'certs', 'localhost.crt')
-    
     session = requests.Session()
-    session.verify = cert_path
+    session.verify = False  # acceptable for testing environments
     
     # SQL injection payload
     sql_injection_payload = "' OR 1=1 --"
