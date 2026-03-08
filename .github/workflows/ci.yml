@@ -26,14 +26,21 @@ jobs:
 
       - name: Wait for services to be ready
         run: |
-          for i in {1..30}; do
-            if docker compose exec -T router curl -k https://localhost:443 > /dev/null 2>&1; then
-              echo "Services are ready"
-              exit 0
+          for i in {1..60}; do
+            # Check if MySQL is accepting connections
+            if docker compose exec -T backend-mysql-database mysql -u user -psupersecretpw -e "SELECT 1" > /dev/null 2>&1; then
+              echo "MySQL is ready"
+              # Also verify the web server is responding
+              if docker compose exec -T router curl -k https://localhost:443 > /dev/null 2>&1; then
+                echo "All services are ready"
+                exit 0
+              fi
             fi
-            echo "Waiting for services... ($i/30)"
+            echo "Waiting for services... ($i/60)"
             sleep 2
           done
+          echo "Services failed to start"
+          docker compose logs
           exit 1
 
       - name: Set up Python
