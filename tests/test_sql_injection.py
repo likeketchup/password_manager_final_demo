@@ -5,15 +5,12 @@ import os
 
 def test_sql_injection_protection():
     """Test that SQL injection attacks are blocked on login page"""
-    # Construct path to the certificate (from repo root)
-    repo_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    # Construct path to the certificate (go up from tests/ to repo root)
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     cert_path = os.path.join(repo_root, 'certs', 'localhost.crt')
     
-    # Use certificate verification if file exists, otherwise allow unverified
-    verify_cert = cert_path if os.path.exists(cert_path) else False
-    
     session = requests.Session()
-    session.verify = verify_cert
+    session.verify = cert_path
     
     # SQL injection payload
     sql_injection_payload = "' OR 1=1 --"
