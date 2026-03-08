@@ -84,3 +84,44 @@ def test_invalid_pdf_file_upload():
     
     # Should show error message about file type
     assert 'Error' in response.text or 'Only .txt files allowed' in response.text
+
+
+def test_file_too_large():
+    """Test that files larger than 100KB are rejected"""
+    
+    # Path to test file (negative.pdf is 131KB, exceeds 100KB limit)
+    test_file = os.path.join(os.path.dirname(__file__), 'negative.pdf')
+    
+    # Login first
+    session = requests.Session()
+    session.verify = False
+    
+    login_data = {
+        'username': 'username',
+        'password': 'password!'
+    }
+    
+    # Login
+    session.post('https://localhost:443/login.php', data=login_data, timeout=5)
+    
+    # Prepare file upload to vault
+    vault_id = 1
+    with open(test_file, 'rb') as f:
+        files = {'file': f}
+        data = {
+            'addUsername': 'testuser3',
+            'addWebsite': 'testsite3.com',
+            'addPassword': 'testpass789',
+            'addNotes': 'Test notes',
+            'vaultId': vault_id
+        }
+        
+        response = session.post(
+            f'https://localhost:443/vaults/vault_details.php?vault_id={vault_id}',
+            files=files,
+            data=data,
+            timeout=5
+        )
+    
+    # Should show error message about file size
+    assert 'Error' in response.text or 'File too large' in response.text

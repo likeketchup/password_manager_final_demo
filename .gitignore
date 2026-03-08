@@ -2,3 +2,14 @@ composer.lock
 vendor
 .env
 .DS_Store
+
+# Pytest and Python
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
