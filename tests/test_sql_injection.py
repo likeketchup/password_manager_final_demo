@@ -1,15 +1,15 @@
 import requests
 import pytest
-import urllib3
-
-# Suppress self-signed certificate warning
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import os
 
 
 def test_sql_injection_protection():
     """Test that SQL injection attacks are blocked on login page"""
+    # Use the self-signed certificate from the repo
+    cert_path = os.path.join(os.path.dirname(__file__), '..', 'certs', 'localhost.crt')
+    
     session = requests.Session()
-    session.verify = False
+    session.verify = cert_path
     
     # SQL injection payload
     sql_injection_payload = "' OR 1=1 --"
