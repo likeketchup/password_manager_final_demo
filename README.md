@@ -1,3 +1,4 @@
+test1
 # Week 1 | Getting Started
 Welcome to the UW HusKey Manager! Until now, this password manager has been used internally by you and your team for work-related password management. Your boss has decided that the HusKey Manager could make a great consumer product and would like to make it publicly available by the end of the quarter. You know that in the web application's current state, there are numerous security issues that need to be addressed before the general public can safely use this service. Over the next several weeks, you will apply what you learn in lecture to identify vulnerabilities in this web app, remediate them, and ensure that the web application maintains it's functionality. By the end of the quarter you will be left with a more secure HusKey Manager!
 
