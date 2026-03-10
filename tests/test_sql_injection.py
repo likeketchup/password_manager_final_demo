@@ -5,7 +5,7 @@ import pytest
 def test_sql_injection_protection():
     """Test that SQL injection attacks are blocked on login page"""
     session = requests.Session()
-    session.verify = False  # acceptable for testing environments
+    session.verify = False 
     
     # SQL injection payload
     sql_injection_payload = "' OR 1=1 --"

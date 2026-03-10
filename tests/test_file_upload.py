@@ -2,9 +2,9 @@ import requests
 import pytest
 import os
 
-
+"""Test that valid .txt files are accepted"""
 def test_valid_txt_file_upload():
-    """Test that valid .txt files are accepted"""
+    
     
     # Path to test file
     test_file = os.path.join(os.path.dirname(__file__), 'positive.txt')
@@ -44,10 +44,8 @@ def test_valid_txt_file_upload():
     assert 'vault_details.php' in response.url or response.status_code == 200
     assert 'Error' not in response.text
 
-
-def test_invalid_pdf_file_upload():
-    """Test that invalid .pdf files are rejected"""
-    
+"""Test that invalid .pdf files are rejected"""
+def test_invalid_pdf_file_upload():    
     # Path to test file
     test_file = os.path.join(os.path.dirname(__file__), 'negative.pdf')
     
@@ -84,11 +82,9 @@ def test_invalid_pdf_file_upload():
     
     # Should show error message about file type
     assert 'Error' in response.text or 'Only .txt files allowed' in response.text
-
-
-def test_file_too_large():
-    """Test that files larger than 100KB are rejected"""
     
+"""Test that files larger than 100KB are rejected"""
+def test_file_too_large():
     # Path to test file (negative.pdf is 131KB, exceeds 100KB limit)
     test_file = os.path.join(os.path.dirname(__file__), 'negative.pdf')
     

@@ -6,8 +6,6 @@ def test_https_connection():
     """Test that the application is running on HTTPS (port 443)"""
     url = "https://localhost:443"
     
-    # Make request with self-signed certificate verification disabled
-    # (acceptable for testing environments)
     response = requests.get(url, verify=False, timeout=5)
     
     # Verify the connection was successful
